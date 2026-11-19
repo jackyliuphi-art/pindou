@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>你是哪种拼豆人？</title>
+<meta name="description" content="16 道题，测出你的拼豆人格和本命豆色。原创趣味测试，仅供娱乐。">
+<style>
+:root{
+  --ink:#2b2433; --ink2:#6b6275; --paper:#f7f3ea; --card:#fffdf8; --line:#e6dfd0;
+  --accent:#c8304a; --peg:#e9e2d3;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;font-size:17px;line-height:1.6;
+  min-height:100vh;-webkit-tap-highlight-color:transparent;
+  background-image:radial-gradient(circle,var(--peg) 2.2px,transparent 2.6px);background-size:22px 22px}
+.wrap{max-width:460px;margin:0 auto;padding:20px 16px 40px;min-height:100vh;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.on{display:flex;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.panel{background:var(--card);border:2px solid var(--ink);border-radius:18px;box-shadow:0 5px 0 var(--ink);padding:22px 18px}
+h1{font-size:30px;line-height:1.25;letter-spacing:1px;text-align:center;margin:6px 0 4px}
+.sub{color:var(--ink2);text-align:center;font-size:15px}
+#cover{justify-content:center}
+#cover .fine{margin-top:0}
+#cover canvas{width:100%;height:auto;display:block;margin:18px auto 14px;image-rendering:auto}
+.btn{appearance:none;border:2px solid var(--ink);background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:18px;
+  border-radius:999px;padding:14px 20px;width:100%;box-shadow:0 4px 0 var(--ink);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.ghost{background:var(--card);color:var(--ink)}
+.meta{display:flex;justify-content:center;gap:14px;color:var(--ink2);font-size:13px;margin-top:12px}
+.fine{color:var(--ink2);font-size:12px;text-align:center;margin-top:auto;padding-top:22px}
+.codebox{margin:0 0 14px}
+.codebox label{display:block;font-weight:700;font-size:15px;margin-bottom:6px}
+.codebox label span{font-weight:400;color:var(--ink2);font-size:13px}
+.codebox input{width:100%;font:inherit;font-size:20px;letter-spacing:3px;text-align:center;padding:12px;border:2px solid var(--ink);border-radius:14px;background:#fff;color:var(--ink)}
+.codebox input[aria-invalid=true]{border-color:var(--accent)}
+.codebox .err{color:var(--accent);font-size:14px;min-height:1.4em;margin-top:6px;text-align:center}
+
+/* 答题 */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.back{border:none;background:none;font:inherit;color:var(--ink2);font-size:15px;padding:6px 4px;cursor:pointer;min-width:52px;text-align:left}
+.back:disabled{opacity:.3}
+.beads{flex:1;display:grid;grid-template-columns:repeat(16,1fr);gap:3px}
+.beads i{aspect-ratio:1;border-radius:50%;background:var(--card);border:1.5px solid #cfc6b4;position:relative}
+.beads i.f{border-color:rgba(0,0,0,.25)}
+.beads i.f::after{content:"";position:absolute;inset:32%;border-radius:50%;background:rgba(255,255,255,.55)}
+.count{font-size:13px;color:var(--ink2);min-width:38px;text-align:right}
+.qn{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px}
+.qt{font-size:21px;font-weight:700;line-height:1.45;margin:6px 0 18px}
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{appearance:none;text-align:left;font:inherit;font-size:16px;line-height:1.5;color:var(--ink);background:var(--card);
+  border:2px solid var(--ink);border-radius:14px;padding:13px 14px 13px 46px;position:relative;cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:transform .08s,box-shadow .08s,background .15s}
+.opt::before{content:attr(data-k);position:absolute;left:12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;
+  background:var(--c);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center;box-shadow:inset 0 0 0 7px var(--c),inset 0 0 0 12px rgba(255,255,255,.0)}
+.opt:active,.opt.pick{transform:translateY(2px);box-shadow:0 1px 0 var(--ink);background:#fff6e6}
+
+/* 熨烫中 */
+#iron{align-items:center;justify-content:center;text-align:center}
+#iron canvas{width:220px;height:220px}
+#iron p{margin-top:10px;font-weight:700}
+#iron small{color:var(--ink2)}
+
+/* 结果 */
+.cardimg{width:100%;height:auto;display:block;border-radius:12px}
+.hint{text-align:center;font-size:13px;color:var(--ink2);margin:10px 0 16px}
+.desc h2{font-size:19px;margin-bottom:6px}
+.desc p{color:#3d3545;font-size:16px}
+.desc .tip{margin-top:12px;padding:10px 12px;border-radius:12px;background:#fff3e8;font-size:15px}
+.row{display:flex;gap:10px;margin-top:16px}
+.row .btn{font-size:16px;padding:12px 10px}
+.others{margin-top:18px}
+.others h3{font-size:15px;margin-bottom:8px;color:var(--ink2);font-weight:600}
+.olist{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.olist div{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:6px 2px 4px;text-align:center;font-size:11px;line-height:1.3}
+.olist div.me{border-color:var(--ink);background:#fff6e6;font-weight:700}
+.olist canvas{width:44px;height:44px;display:block;margin:0 auto 2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="screen on" id="cover">
+    <div class="panel">
+      <h1>你是哪种拼豆人？</h1>
+      <p class="sub">16 道题，测出你的拼豆人格和本命豆色</p>
+      <canvas id="coverArt" width="840" height="440"></canvas>
+      <div class="codebox" id="codeBox" hidden>
+        <label for="code">兑换码 <span>（下单后发给你的 8 位码）</span></label>
+        <input id="code" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="9" placeholder="XXXX-XXXX" aria-describedby="codeErr">
+        <p class="err" id="codeErr" role="alert"></p>
+      </div>
+      <button class="btn" id="startBtn">开始拼</button>
+      <div class="meta"><span>约 2 分钟</span><span>·</span><span>8 种拼豆人</span><span>·</span><span>结果可存图</span></div>
+    </div>
+    <p class="fine">原创趣味测试 · 仅供娱乐，非心理诊断</p>
+  </section>
+
+  <section class="screen" id="quiz">
+    <div class="top">
+      <button class="back" id="backBtn">‹ 上一题</button>
+      <div class="beads" id="beads"></div>
+      <span class="count" id="count">1/16</span>
+    </div>
+    <div class="panel">
+      <div class="qn" id="qn">第 1 题</div>
+      <div class="qt" id="qt"></div>
+      <div class="opts" id="opts"></div>
+    </div>
+    <p class="fine">原创趣味测试 · 仅供娱乐，非心理诊断</p>
+  </section>
+
+  <section class="screen" id="iron">
+    <canvas id="ironArt" width="440" height="440"></canvas>
+    <p>正在熨烫你的结果…</p>
+    <small>别急，熨太快会翘边</small>
+  </section>
+
+  <section class="screen" id="result">
+    <div id="cardBox"></div>
+    <p class="hint">长按图片保存，发给朋友看看 TA 是哪种</p>
+    <div class="panel desc">
+      <h2 id="rName"></h2>
+      <p id="rDesc"></p>
+      <p class="tip" id="rTip"></p>
+    </div>
+    <div class="row">
+      <button class="btn" id="saveBtn">保存结果图</button>
+      <button class="btn ghost" id="againBtn">再测一次</button>
+    </div>
+    <div class="others">
+      <h3>全部 8 种拼豆人</h3>
+      <div class="olist" id="olist"></div>
+    </div>
+    <p class="fine">原创趣味测试 · 仅供娱乐，非心理诊断</p>
+  </section>
+
+</div>
+
+<script>
+// ---------- 豆子颜色 ----------
+const PAL = { k:'#2b2433', w:'#f4f1ea', r:'#e6455a', y:'#f6c445', b:'#4a8fe0', g:'#5dbb7a', m:'#a9b1bd', s:'#cdd6e2', o:'#f08a3c', t:'#d9a066', q:'#f29bb5', n:'#3a4fa8', l:'#b59ad9', h:'#5ec9a4' };
+
+// ---------- 8 种拼豆人（全部原创）----------
+// 图标是 13 列的拼豆图，p = 本命豆色
+const TYPES = [
+  { name:'图纸复刻派', tag:'一颗都不能错', color:'#e6455a', bean:'樱桃红',
+    desc:'你拼豆像在做精密仪器。图纸打印好、色号对好、镊子摆正，最后成品和原图放在一起，别人分不出哪个是图。你享受的是「完全按计划完成」的那一刻。拼到一半发现错了一颗，你会把周围一圈都拆掉重来；朋友说「看不出来啊」，你说「我看得出来」。',
+    traits:['色号背得比课表熟','成品率最高','强迫症友好'], mate:1,
+    tip:'试试在下一个作品里换一颗图纸上没有的颜色，看看会发生什么。',
+    icon:['.....kkk.....','..kkkkmkkkk..','..kwwwwwwwk..','..kwppwppwk..','..kwpppppwk..','..kwwpppwwk..','..kwwwpwwwk..','..kwwwwwwwk..','..kwwwwwgwk..','..kwgwwgwwk..','..kwwggwwwk..','..kkkkkkkkk..'] },
+  { name:'原创像素画家', tag:'图纸？我自己画', color:'#5ec9a4', bean:'薄荷绿',
+    desc:'别人找图纸，你开格子纸。你脑子里的画面比豆子还多，拼豆对你来说是另一种画画。你的作品在网上搜不到，因为它只存在于你的脑子里和你的拼板上。你手机相册里一半是参考图，另一半是「这个配色好看先存着」；看到一只猫、一块蛋糕，第一反应是「这能拼几格」。',
+    traits:['格子纸用量惊人','配色自成一派','作品独一无二'], mate:0,
+    tip:'把你画的图纸存好，说不定哪天有人想照着拼。',
+    icon:['..........kk.','.........kqqk','........kmmk.','.......kyyk..','......kyyk...','.....kyyk....','....kyyk.....','...kttk......','..ktk........','.kk..........','.............','pp.pp..pp.pp.','..p..pp..p...'] },
+  { name:'熨烫翻车王', tag:'拼两小时，熨两秒，化了', color:'#f08a3c', bean:'焦糖橙',
+    desc:'拼的时候一切顺利，熨斗一上就开始玄学：化开、翘边、粘纸、一半熔了一半没熔。但你从不放弃，翻车照片攒了一整个相册，也算一种收藏。家里的熨斗换过一次，烘焙纸买过好几卷，你已经能凭焦味判断这次大概熔到几成。',
+    traits:['和熨斗关系复杂','翻车也要发出来','越挫越勇'], mate:6,
+    tip:'熨之前先拿几颗散豆试一下温度和时间。',
+    icon:['....s.s.s....','...s.s.s.....','.............','......kkkkk..','......k...k..','....kkkkkkkk.','...kpppppppk.','..kppppppppk.','.kpppppppppk.','kmmmmmmmmmmk.','kkkkkkkkkkkk.','.............','..o.oo..o.o..'] },
+  { name:'囤豆仓鼠', tag:'买豆的快乐 > 拼豆的快乐', color:'#f6c445', bean:'奶油黄',
+    desc:'你的豆子按色号排满了分装盒，盒子又排满了抽屉。新颜色一上架你就下单，打开盒子看一排排颜色就很治愈。拼不拼，其实没那么重要。快递到了你会先拍开箱，再花一晚上贴色号标签；有人问你缺不缺某个颜色，你能报出它在第几盒第几格。',
+    traits:['色号收藏家','分装盒越买越多','光看着就满足'], mate:5,
+    tip:'挑库存最多的那个颜色，用它拼一个作品吧。',
+    icon:['...kkkkkkk...','...kmmmmmk...','...kkkkkkk...','..k.......k..','.k.........k.','.krybgrqybgk.','.kgqrybgrqyk.','.kbyrgqbyrgk.','.kqgbyrqgbyk.','.kyrqgbyrqgk.','.kgbyrqgbyrk.','..kkkkkkkkk..'] },
+  { name:'夜猫赶工人', tag:'再拼一颗就睡', color:'#3a4fa8', bean:'午夜蓝',
+    desc:'白天想不起来，晚上十一点灵感上线。你拼豆是一口气的事，开了头就停不下来，抬头一看天快亮了。成品很完整，黑眼圈也很完整。你说的「拼一会儿就睡」从来没兑现过，第二天早上拼板还亮着台灯，人已经趴在旁边睡着了。',
+    traits:['深夜限定','一口气拼完','续航惊人'], mate:7,
+    tip:'定个闹钟，凌晨一点必须放下镊子。',
+    icon:['....kkkk.....','..kkyyk......','.kyyyk....y..','.kyyk....yyy.','kyyyk.....y..','kyyyk........','kyyyk........','kyyyk....y...','.kyyyk.......','.kyyyyk......','..kkyyyykk...','....kkkkk....'] },
+  { name:'送礼型选手', tag:'这个送你', color:'#f27aa0', bean:'草莓粉',
+    desc:'你拼豆很少是为了自己。朋友生日、同学毕业、想感谢的人，每个作品背后都有一个要送的人。你最开心的时候不是熨好那一刻，是对方收到的那一刻。你的备忘录里记着谁喜欢哪个角色、哪个颜色；赶礼物的那几天手最快，送出去之后才发现自己连张成品照都忘了拍。',
+    traits:['礼物清单很长','记得每个人喜欢什么','自己手上一个没留'], mate:3,
+    tip:'下一个作品，拼给你自己。',
+    icon:['...kk...kk...','..kyyk.kyyk..','...kyykyyk...','kkkkkkkkkkkkk','kpppppypppppk','kkkkkkykkkkkk','.kppppyppppk.','.kppppyppppk.','.kppppyppppk.','.kppppyppppk.','.kppppyppppk.','.kkkkkkkkkkk.'] },
+  { name:'实用改造家', tag:'好看，还得能用', color:'#4fa8e8', bean:'天空蓝',
+    desc:'一个作品到你手里不会只是摆着：加个圈就是钥匙扣，背后贴磁铁就是冰箱贴，拼大一点就是杯垫。你家里天天用的东西，好几样都是你拼的。你的抽屉里常年备着钥匙圈、别针、磁铁和热熔胶；别人夸好看，你的第一句是「而且很耐用」。',
+    traits:['五金配件常备','作品天天在用','生活小能手'], mate:2,
+    tip:'把你的改造方法记下来，下次做得更快。',
+    icon:['.....mmm.....','....m...m....','....m...m....','.....mmm.....','......k......','...kkk.kkk...','..kpppkpppk..','..kpppppppk..','..kpppppppk..','...kpppppk...','....kpppk....','.....kpk.....','......k......'] },
+  { name:'佛系摸鱼豆', tag:'拼一半也是拼', color:'#b59ad9', bean:'雾紫',
+    desc:'你的拼板上永远有一个拼了一半的作品。不着急，不赶工，想拼就拼两颗，不想拼就放着。拼豆对你来说是休息，不是任务。上次那个作品开工时还是夏天，现在豆子上落了点灰，你看了一眼：嗯，下周再说。',
+    traits:['进度随缘','拼板永远有存货','心态最稳'], mate:4,
+    tip:'这样就很好，慢慢来。',
+    icon:['..kkk...kkk..','.kpppk.kwwwk.','kpppppkwwwwwk','kppppppwwwwwk','kppppppwwwwwk','.kpppppwwwwk.','..kppppwwwk..','...kpppwwk...','....kppwk....','.....kpk.....','......k......'] },
+];
+
+// ---------- 16 道题：每个选项给哪几种拼豆人加分 ----------
+const Q = [
+  ['刚拿到一盒新豆子，你第一件事是？',[
+    ['先找一张喜欢的图纸，照着拼',{0:2}],['打开格子纸，先画一张自己的图',{1:2}],
+    ['按颜色倒进分装盒，排得整整齐齐',{3:2}],['先想好拼完送给谁',{5:2}]]],
+  ['你一般什么时候拼豆？',[
+    ['晚上十一点以后，越夜越精神',{4:2}],['周末下午，泡杯茶慢慢来',{0:1,7:1}],
+    ['想起来就拼几颗，拼一半放着也行',{7:2}],['有人过生日或者过节前，赶着做礼物',{5:2}]]],
+  ['熨烫的时候你通常？',[
+    ['温度、时间、垫纸，全按教程来',{0:2}],['凭感觉，熨着熨着就化成一片了',{2:2}],
+    ['熨之前先拍十张照片留念',{3:1,1:1}],['一边熨一边想：做成杯垫还是冰箱贴？',{6:2}]]],
+  ['图纸上有个颜色你没有，你会？',[
+    ['必须买到同色号再拼',{0:2}],['换个相近的，顺便改改配色',{1:2}],
+    ['正好有理由再下单一批豆',{3:2}],['先放着，哪天想起来再说',{7:2}]]],
+  ['你拼好的作品最后都去哪了？',[
+    ['装框挂墙，或者摆在桌上',{0:1,1:1}],['做成钥匙扣、挂件、杯垫，天天在用',{6:2}],
+    ['大部分都送人了',{5:2}],['还在拼板上，没熨',{7:2}]]],
+  ['你的豆子库存……',[
+    ['够用就行，用完再买',{6:1,0:1}],['几十个颜色起步，还在增加',{3:2}],
+    ['说不清，反正盒子越来越多',{3:1,7:1}],['一半是为某个作品专门买的',{5:1,1:1}]]],
+  ['熨翻车了（化开、粘板、翘边），你的反应是？',[
+    ['习惯了，翻车是日常',{2:2}],['拆掉重拼，必须完美',{0:2}],
+    ['翘就翘吧，挂起来也挺有味道',{7:1,1:1}],['拍下来发朋友圈：「又翻车了」',{2:1,4:1}]]],
+  ['刷到一张很火的图纸，你会？',[
+    ['收藏，马上开拼',{0:2}],['心想：我能不能画一个更好看的',{1:2}],
+    ['收藏，然后在收藏夹里吃灰',{7:1,3:1}],['想到某个朋友会喜欢，拼来送 TA',{5:2}]]],
+  ['拼豆的时候，你通常在？',[
+    ['听播客、追剧，手不停',{4:1,7:1}],['全神贯注，镊子不离手',{0:2}],
+    ['熬夜，拼完天亮了',{4:2}],['和朋友一起拼，边聊边拼',{5:1,6:1}]]],
+  ['你最离不开的工具是？',[
+    ['镊子和打印好的图纸',{0:2}],['格子纸或者画图软件',{1:2}],
+    ['熨斗（和它有很多故事）',{2:2}],['各种分装盒和色号标签',{3:2}]]],
+  ['有人问「拼这个有什么用」，你会说？',[
+    ['有用啊，你看这个杯垫',{6:2}],['好看就是用处',{1:1,0:1}],
+    ['送你一个你就懂了',{5:2}],['解压，拼着拼着心就静了',{7:1,4:1}]]],
+  ['一个作品从开始到熨好，你一般要多久？',[
+    ['一个晚上，必须一口气拼完',{4:2}],['几天，按计划推进',{0:1,6:1}],
+    ['不一定，有的拼了一个月还没完',{7:2}],['送人的前一天晚上刚好拼完',{5:1,4:1}]]],
+  ['买豆子你最看重？',[
+    ['颜色全、色号准',{0:1,3:1}],['好熨，不容易化',{2:2}],
+    ['量大实惠，多多益善',{3:2}],['有没有特别的：夜光、透明、珠光',{1:1,4:1}]]],
+  ['你的拼板现在是什么状态？',[
+    ['干干净净，等下一个作品',{0:1,6:1}],['上面有一个拼了一半的',{7:2}],
+    ['好几块拼板同时开工',{4:1,1:1}],['粘着几颗熨化的豆',{2:2}]]],
+  ['如果拼豆能变成一份工作，你想做？',[
+    ['画原创图纸',{1:2}],['做实用小物开个小店',{6:2}],
+    ['接定制，帮别人做礼物',{5:2}],['开个豆子批发铺',{3:2}]]],
+  ['用一个词形容你拼豆的状态：',[
+    ['严谨',{0:2}],['随缘',{7:2}],['上头',{4:2}],['热闹（翻车也开心）',{2:2}]]],
+];
+const OPT_COLORS = ['#d63a50','#a87400','#2f6fc0','#2f8a52'];
+
+// 每种拼豆人在 16 题里最多能拿多少分，用来做公平比较
+const MAXS = TYPES.map((_, t) => Q.reduce((s, q) => s + Math.max(0, ...q[1].map(o => o[1][t] || 0)), 0));
+
+// ---------- 画豆子 ----------
+function bead(ctx, x, y, d, color, empty) {
+  const r = d * 0.47;
+  if (empty) { ctx.fillStyle = color || 'rgba(0,0,0,.07)'; ctx.beginPath(); ctx.arc(x, y, d * 0.12, 0, 7); ctx.fill(); return; }
+  ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+  const g = ctx.createRadialGradient(x - r * .35, y - r * .4, r * .1, x, y, r);
+  g.addColorStop(0, 'rgba(255,255,255,.38)'); g.addColorStop(.55, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(0,0,0,.16)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.28)'; ctx.beginPath(); ctx.arc(x, y, d * 0.17, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(x + d * .03, y + d * .04, d * 0.12, 0, 7); ctx.fill();
+}
+// 把一个图标画成一块拼豆：cx, cy 是中心，d 是豆子直径，peg 表示空位也画拼板钉
+function drawIcon(ctx, t, cx, cy, d, peg) {
+  const pegCol = t === 4 ? 'rgba(255,255,255,.12)' : 0;
+  const rows = TYPES[t].icon, H = rows.length, W = 13, cols = Object.assign({}, PAL, { p: TYPES[t].color });
+  const x0 = cx - (W - 1) * d / 2, y0 = cy - (H - 1) * d / 2;
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+    const ch = rows[j][i] || '.';
+    if (ch === '.') { if (peg) bead(ctx, x0 + i * d, y0 + j * d, d, pegCol, true); }
+    else bead(ctx, x0 + i * d, y0 + j * d, d, cols[ch]);
+  }
+}
+function iconCanvas(t, px) {
+  const c = document.createElement('canvas'); c.width = c.height = px * 2;
+  drawIcon(c.getContext('2d'), t, px, px, px * 2 / 14.5, false); return c;
+}
+
+// ---------- 封面：8 种拼豆人排成两行 ----------
+(function cover() {
+  const c = document.getElementById('coverArt'), ctx = c.getContext('2d');
+  for (let i = 0; i < 8; i++) {
+    const cx = 105 + (i % 4) * 210, cy = 110 + Math.floor(i / 4) * 220;
+    ctx.fillStyle = i === 4 ? '#262c5c' : '#f2ecdf'; roundRect(ctx, cx - 96, cy - 100, 192, 200, 22); ctx.fill();
+    drawIcon(ctx, i, cx, cy, 12.4, true);
+  }
+})();
+function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+// ---------- 答题 ----------
+const answers = [];
+let cur = 0;
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); window.scrollTo(0, 0); }
+const BEAD_SEQ = ['#e6455a','#f08a3c','#f6c445','#5dbb7a','#5ec9a4','#4fa8e8','#3a4fa8','#b59ad9'];
+$('beads').innerHTML = Q.map(() => '<i></i>').join('');
+function renderQ() {
+  const [text, opts] = Q[cur];
+  $('qn').textContent = `第 ${cur + 1} 题`;
+  $('qt').textContent = text;
+  $('count').textContent = `${cur + 1}/${Q.length}`;
+  $('backBtn').disabled = cur === 0;
+  [...$('beads').children].forEach((b, i) => { const f = i < cur; b.className = f ? 'f' : ''; b.style.background = f ? BEAD_SEQ[i % 8] : ''; });
+  $('opts').innerHTML = '';
+  opts.forEach((o, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt' + (answers[cur] === i ? ' pick' : ''); b.dataset.k = 'ABCD'[i]; b.style.setProperty('--c', OPT_COLORS[i]);
+    b.textContent = o[0];
+    b.onclick = () => { answers[cur] = i; b.classList.add('pick'); setTimeout(next, 180); };
+    $('opts').appendChild(b);
+  });
+}
+function next() { if (cur < Q.length - 1) { cur++; renderQ(); } else finish(); }
+// ---------- 兑换码（静态网页，只能防随手转发，挡不住会看源码的人）----------
+// 上架前把 SALT 换成只有你知道的一串字，再跑 node tools/gen-codes.mjs 200 生成码；改了盐，旧码全部作废。
+const REDEEM_ON = true;
+// <redeem>
+const SALT = 'pd-24qcj6ffern7n9a5';
+const ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'; // 去掉了 0 O 1 I L，手机上不容易抄错
+function fnv1a(text) { let h = 0x811c9dc5; for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h >>> 0; }
+function checksum(head, salt) { let h = fnv1a(`${salt}|${head}|${salt}`), out = ''; for (let i = 0; i < 4; i++) { out += ALPHABET[h % ALPHABET.length]; h = (Math.floor(h / ALPHABET.length) ^ fnv1a(out + salt)) >>> 0; } return out; }
+const normCode = s => String(s || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+function checkCode(input, salt) { const c = normCode(input); return c.length === 8 && [...c].every(x => ALPHABET.includes(x)) && checksum(c.slice(0, 4), salt) === c.slice(4); }
+function makeCode(salt, rnd = Math.random) { let h = ''; for (let i = 0; i < 4; i++) h += ALPHABET[Math.floor(rnd() * ALPHABET.length)]; return `${h}-${checksum(h, salt)}`; }
+// </redeem>
+const store = { get(k) { try { return localStorage.getItem('pindou:' + k); } catch { return null; } }, set(k, v) { try { localStorage.setItem('pindou:' + k, v); } catch {} } };
+let unlocked = !REDEEM_ON || store.get('unlocked') === '1';
+$('codeBox').hidden = unlocked;
+$('code').addEventListener('input', () => { $('code').removeAttribute('aria-invalid'); $('codeErr').textContent = ''; });
+$('startBtn').onclick = () => {
+  if (!unlocked) {
+    const v = $('code').value;
+    if (!checkCode(v, SALT)) {
+      $('code').setAttribute('aria-invalid', 'true');
+      $('codeErr').textContent = v.trim() ? '兑换码不对，检查一下有没有抄错' : '请先输入兑换码';
+      $('code').focus(); return;
+    }
+    unlocked = true; store.set('unlocked', '1'); $('codeBox').hidden = true;
+  }
+  answers.length = 0; cur = 0; renderQ(); show('quiz');
+};
+$('backBtn').onclick = () => { if (cur > 0) { cur--; renderQ(); } };
+$('againBtn').onclick = () => { answers.length = 0; cur = 0; show('cover'); };
+
+function scoreOf(ans) {
+  const raw = TYPES.map(() => 0);
+  ans.forEach((a, qi) => { const s = Q[qi][1][a][1]; for (const t in s) raw[t] += s[t]; });
+  // 除以满分的 0.65 次方：既照顾满分低的类型，又不让它们被随手答中太多（随机作答时 8 种约各占 9%–15%）
+  return raw.map((v, t) => v / Math.pow(MAXS[t], 0.65));
+}
+function finish() {
+  show('iron'); ironAnim();
+  setTimeout(() => showResult(scoreOf(answers)), 1600);
+}
+
+// ---------- 熨烫动画 ----------
+let ironRAF;
+function ironAnim() {
+  const c = $('ironArt'), ctx = c.getContext('2d'), t0 = performance.now();
+  cancelAnimationFrame(ironRAF);
+  (function f(now) {
+    const t = (now - t0) / 1000; ctx.clearRect(0, 0, 440, 440);
+    const melt = Math.min(1, t / 1.4);
+    for (let j = 0; j < 7; j++) for (let i = 0; i < 7; i++) {
+      const x = 70 + i * 50, y = 120 + j * 32 + 60, col = BEAD_SEQ[(i + j) % 8];
+      ctx.fillStyle = col; ctx.beginPath();
+      const r = 18 + melt * 7; ctx.arc(x, y, r, 0, 7); ctx.fill();
+      ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.arc(x, y, 7 * (1 - melt * .8), 0, 7); ctx.fill();
+    }
+    const ix = 80 + (Math.sin(t * 4) * .5 + .5) * 260;
+    ctx.save(); ctx.translate(ix, 150);
+    ctx.fillStyle = '#2b2433'; roundRect(ctx, -60, -70, 120, 22, 10); ctx.fill();
+    ctx.fillStyle = '#f08a3c'; ctx.beginPath(); ctx.moveTo(-80, 20); ctx.lineTo(70, 20); ctx.lineTo(60, -50); ctx.lineTo(-40, -50); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#a9b1bd'; ctx.fillRect(-82, 20, 154, 12);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(205,214,226,.9)';
+    for (let k = 0; k < 3; k++) { const yy = 60 - ((t * 60 + k * 25) % 70); ctx.beginPath(); ctx.arc(ix - 20 + k * 20, yy, 6, 0, 7); ctx.fill(); }
+    if ($('iron').classList.contains('on')) ironRAF = requestAnimationFrame(f);
+  })(t0);
+}
+
+// ---------- 结果卡 ----------
+function wrapText(ctx, text, x, y, maxW, lh) {
+  let line = '', yy = y;
+  for (const ch of text) { if (ctx.measureText(line + ch).width > maxW && line) { ctx.fillText(line, x, yy); line = ch; yy += lh; } else line += ch; }
+  if (line) ctx.fillText(line, x, yy); return yy;
+}
+const FONT = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif';
+function drawCard(top, score) {
+  const T = TYPES[top], W = 1080, H = 1660, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#f7f3ea'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#e9e2d3';
+  for (let y = 18; y < H; y += 36) for (let x = 18; x < W; x += 36) { ctx.beginPath(); ctx.arc(x, y, 3.2, 0, 7); ctx.fill(); }
+  // 卡片
+  ctx.fillStyle = '#2b2433'; roundRect(ctx, 60, 70, W - 120, H - 140, 44); ctx.fill();
+  ctx.fillStyle = '#fffdf8'; roundRect(ctx, 60, 60, W - 120, H - 140, 44); ctx.fill();
+  ctx.lineWidth = 5; ctx.strokeStyle = '#2b2433'; ctx.stroke();
+  ctx.textAlign = 'center'; ctx.fillStyle = '#6b6275'; ctx.font = `500 34px ${FONT}`;
+  ctx.fillText('我测出来的拼豆人格是', W / 2, 140);
+  // 拼板 + 图标
+  ctx.fillStyle = top === 4 ? '#262c5c' : T.color + '22'; roundRect(ctx, W / 2 - 260, 180, 520, 520, 36); ctx.fill();
+  drawIcon(ctx, top, W / 2, 440, 36, true);
+  ctx.fillStyle = '#2b2433'; ctx.font = `800 92px ${FONT}`; ctx.fillText(T.name, W / 2, 820);
+  ctx.fillStyle = T.color === '#f6c445' ? '#b8860b' : T.color; ctx.font = `700 42px ${FONT}`; ctx.fillText('「' + T.tag + '」', W / 2, 890);
+  // 标签
+  ctx.font = `600 32px ${FONT}`;
+  const tw = T.traits.map(s => ctx.measureText(s).width + 52), total = tw.reduce((a, b) => a + b, 0) + 20 * (tw.length - 1);
+  let x = W / 2 - total / 2;
+  T.traits.forEach((s, i) => { ctx.fillStyle = '#f2ecdf'; roundRect(ctx, x, 935, tw[i], 60, 30); ctx.fill(); ctx.fillStyle = '#2b2433'; ctx.fillText(s, x + tw[i] / 2, 976); x += tw[i] + 20; });
+  // 成分
+  const order = score.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]).slice(0, 3);
+  const sum = order.reduce((s, o) => s + o[0], 0) || 1;
+  let pcts = order.map(o => Math.round(o[0] / sum * 100)); pcts[0] += 100 - pcts.reduce((a, b) => a + b, 0);
+  ctx.textAlign = 'left'; ctx.fillStyle = '#6b6275'; ctx.font = `600 32px ${FONT}`; ctx.fillText('我的拼豆成分', 130, 1075);
+  order.forEach(([, i], k) => {
+    const y = 1105 + k * 72, w = 470 * pcts[k] / 100;
+    ctx.fillStyle = '#2b2433'; ctx.font = `600 34px ${FONT}`; ctx.fillText(TYPES[i].name, 130, y + 34);
+    ctx.fillStyle = '#efe8da'; roundRect(ctx, 380, y + 6, 470, 38, 19); ctx.fill();
+    ctx.fillStyle = TYPES[i].color; roundRect(ctx, 380, y + 6, Math.max(38, w), 38, 19); ctx.fill();
+    ctx.fillStyle = '#2b2433'; ctx.textAlign = 'right'; ctx.fillText(pcts[k] + '%', 960, y + 34); ctx.textAlign = 'left';
+  });
+  // 本命豆色 + 最佳搭子
+  const by = 1440;
+  ctx.strokeStyle = '#efe8da'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(130, 1355); ctx.lineTo(950, 1355); ctx.stroke();
+  bead(ctx, 175, by, 96, T.color);
+  ctx.fillStyle = '#6b6275'; ctx.font = `500 28px ${FONT}`; ctx.fillText('本命豆色', 240, by - 12);
+  ctx.fillStyle = '#2b2433'; ctx.font = `700 38px ${FONT}`; ctx.fillText(T.bean, 240, by + 34);
+  const M = TYPES[T.mate];
+  drawIcon(ctx, T.mate, 625, by, 8, false);
+  ctx.fillStyle = '#6b6275'; ctx.font = `500 28px ${FONT}`; ctx.fillText('最佳搭子', 700, by - 12);
+  ctx.fillStyle = '#2b2433'; ctx.font = `700 38px ${FONT}`; ctx.fillText(M.name, 700, by + 34);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#9a90a3'; ctx.font = `500 30px ${FONT}`;
+  ctx.fillText('原创趣味测试 · 仅供娱乐，非心理诊断', W / 2, H - 115);
+  return c;
+}
+let cardURL = '';
+function showResult(score) {
+  const top = score.indexOf(Math.max(...score)), T = TYPES[top];
+  cardURL = drawCard(top, score).toDataURL('image/png');
+  const img = new Image(); img.className = 'cardimg'; img.alt = '你的拼豆人格结果卡'; img.src = cardURL;
+  $('cardBox').replaceChildren(img);
+  $('rName').textContent = `${T.name}｜${T.tag}`;
+  $('rDesc').textContent = T.desc;
+  $('rTip').textContent = '给你的小建议：' + T.tip;
+  $('olist').innerHTML = '';
+  TYPES.forEach((t, i) => { const d = document.createElement('div'); if (i === top) d.className = 'me'; d.appendChild(iconCanvas(i, 44)); d.append(t.name); $('olist').appendChild(d); });
+  show('result');
+  window.resultReady = true;
+}
+$('saveBtn').onclick = () => {
+  const a = document.createElement('a'); a.href = cardURL; a.download = '我的拼豆人格.png';
+  document.body.appendChild(a); a.click(); a.remove();
+  $('saveBtn').textContent = '已保存（没反应就长按上面的图）';
+};
+
+// 截图检查用：?r=类型编号 直接看结果，?q=题号 直接看那道题。只在本机打开时有效，放到网上后不能用它跳过兑换码。
+const LOCAL = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const P = new URLSearchParams(LOCAL ? location.search : '');
+if (P.has('r')) { const t = +P.get('r'); const s = TYPES.map((_, i) => i === t ? 1 : i === TYPES[t].mate ? .6 : i === (t + 3) % 8 ? .4 : .1); showResult(s); }
+else if (P.has('q')) { cur = +P.get('q'); renderQ(); show('quiz'); }
+window.pageReady = true;
+</script>
+</body>
+</html>
